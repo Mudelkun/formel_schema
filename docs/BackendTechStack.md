@@ -9,7 +9,7 @@
 
 ## Runtime & Framework
 - **Node.js** — JavaScript runtime
-- **Express** — HTTP server and routing
+- **Express** — REST API server and routing
 
 ## Database
 - **PostgreSQL** hosted on **Railway**
@@ -41,7 +41,14 @@
 - Never committed to version control
 
 ## Deployment
-- **Railway** — hosts both the Express API server and PostgreSQL database
-- Frontend and backend are deployed **separately and independently**
-  - No API versioning — single API base path (e.g. `/api/...`)
-  - Frontend communicates with the backend over HTTP (CORS configured on the Express server)
+- **Railway** — hosts the full application and PostgreSQL database
+- **Monorepo structure** — frontend and backend live in the same repository, separated by folder:
+  ```
+  formel/
+    ├── frontend/
+    ├── backend/
+    ├── database/
+    └── docs/
+  ```
+- Single deployment — Express serves the API under `/api/...` and the frontend as static files
+- No API versioning
