@@ -64,7 +64,7 @@ Main Features
 
 &#x09;⦁ Students can be marked as scholarship recipients 
 
-&#x09;⦁ Scholarship students are exempt from tuition payments
+&#x09;⦁ Scholarship students are exempt from partial or full tuition payments
 
 
 

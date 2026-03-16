@@ -47,6 +47,7 @@ CREATE TABLE "classes" (
 CREATE TABLE "payments" (
   "id" uuid PRIMARY KEY DEFAULT (gen_random_uuid()),
   "enrollment_id" uuid NOT NULL,
+  "quarter_id" uuid,
   "amount" numeric NOT NULL,
   "payment_date" date NOT NULL,
   "payment_method" varchar,
@@ -114,6 +115,10 @@ ALTER TABLE "contacts" ADD FOREIGN KEY ("student_id") REFERENCES "students" ("id
 
 ALTER TABLE "payments" ADD FOREIGN KEY ("enrollment_id") REFERENCES "enrollments" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 
+ALTER TABLE "payments" ADD FOREIGN KEY ("quarter_id") REFERENCES "quarters" ("id") DEFERRABLE INITIALLY IMMEDIATE;
+
+CREATE INDEX ON "payments" ("quarter_id");
+
 ALTER TABLE "enrollments" ADD FOREIGN KEY ("student_id") REFERENCES "students" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 
 ALTER TABLE "enrollments" ADD FOREIGN KEY ("school_year_id") REFERENCES "school_years" ("id") DEFERRABLE INITIALLY IMMEDIATE;
@@ -158,3 +163,20 @@ CREATE TABLE "audit_logs" (
 );
 
 ALTER TABLE "audit_logs" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") DEFERRABLE INITIALLY IMMEDIATE;
+
+CREATE TABLE "quarters" (
+  "id" uuid PRIMARY KEY DEFAULT (gen_random_uuid()),
+  "school_year_id" uuid NOT NULL,
+  "name" varchar NOT NULL,
+  "number" int NOT NULL,
+  "start_date" date NOT NULL,
+  "end_date" date NOT NULL,
+  "created_at" timestamp DEFAULT (now()),
+  "updated_at" timestamp
+);
+
+CREATE UNIQUE INDEX ON "quarters" ("school_year_id", "number");
+
+CREATE INDEX ON "quarters" ("school_year_id");
+
+ALTER TABLE "quarters" ADD FOREIGN KEY ("school_year_id") REFERENCES "school_years" ("id") DEFERRABLE INITIALLY IMMEDIATE;
