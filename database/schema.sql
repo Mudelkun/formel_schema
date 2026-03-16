@@ -7,7 +7,7 @@ CREATE TABLE "students" (
   "birth_date" date NOT NULL,
   "address" text,
   "scholarship_recipient" boolean DEFAULT false,
-  "status" varchar DEFAULT 'active' CHECK ("status" IN ('active', 'inactive', 'expelled', 'graduated')),
+  "status" varchar DEFAULT 'active' CHECK ("status" IN ('active', 'transfer', 'expelled', 'graduated')),
   "profile_photo_url" text,
   "created_at" timestamp DEFAULT (now()),
   "updated_at" timestamp
@@ -123,3 +123,38 @@ ALTER TABLE "enrollments" ADD FOREIGN KEY ("class_id") REFERENCES "classes" ("id
 ALTER TABLE "payment_documents" ADD FOREIGN KEY ("payment_id") REFERENCES "payments" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 
 ALTER TABLE "student_documents" ADD FOREIGN KEY ("student_id") REFERENCES "students" ("id") DEFERRABLE INITIALLY IMMEDIATE;
+
+CREATE TABLE "scholarships" (
+  "id" uuid PRIMARY KEY DEFAULT (gen_random_uuid()),
+  "enrollment_id" uuid NOT NULL UNIQUE,
+  "type" varchar NOT NULL CHECK ("type" IN ('full', 'partial', 'fixed_amount')),
+  "percentage" numeric CHECK ("percentage" > 0 AND "percentage" <= 100),
+  "fixed_amount" numeric CHECK ("fixed_amount" > 0),
+  "created_at" timestamp DEFAULT (now()),
+  "updated_at" timestamp
+);
+
+ALTER TABLE "scholarships" ADD FOREIGN KEY ("enrollment_id") REFERENCES "enrollments" ("id") DEFERRABLE INITIALLY IMMEDIATE;
+
+CREATE TABLE "school_settings" (
+  "id" uuid PRIMARY KEY DEFAULT (gen_random_uuid()),
+  "school_name" varchar NOT NULL,
+  "address" text,
+  "phone" varchar,
+  "email" varchar,
+  "created_at" timestamp DEFAULT (now()),
+  "updated_at" timestamp
+);
+
+CREATE TABLE "audit_logs" (
+  "id" uuid PRIMARY KEY DEFAULT (gen_random_uuid()),
+  "user_id" uuid NOT NULL,
+  "action" varchar NOT NULL,
+  "table_name" varchar NOT NULL,
+  "record_id" uuid,
+  "old_data" jsonb,
+  "new_data" jsonb,
+  "created_at" timestamp DEFAULT (now())
+);
+
+ALTER TABLE "audit_logs" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") DEFERRABLE INITIALLY IMMEDIATE;
